@@ -7,12 +7,13 @@ The objective of this project is to implement the various components of a securi
 
 #### COAI - Confidentiality and Integrity
 
-Details on how to run, sample input commands are given in file sample_cmds.txt
+Details on how to run, sample input commands are given below, as well as on problem statement.
 
 ###### Files: 
 1. lab2.py : python program as specified in problem statement.
 2. usernames.txt : file containing 11 distinct usernames for which can be used to test the program, new names can be added.
 3. README : has instrutions and sample cases to run.
+4. COMMENTS.txt : feedback and experience of the project.
 
 ###### Instructions:
 1. Used library cryptography, https://pypi.org/project/cryptography

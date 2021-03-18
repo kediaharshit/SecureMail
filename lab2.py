@@ -88,7 +88,7 @@ def conf(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     # step 3
     key_iv = sess_key + iv
     
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:
         c_text1 = rec_pub_rsa.encrypt(key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA512()), algorithm=hashes.SHA512(), label=None))
     except:
@@ -148,7 +148,7 @@ def read_conf(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     enc_key_iv = base64.b64decode(line1)
     enc_msg = base64.b64decode(line2)
     
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:
         key_iv = rec_priv_rsa.decrypt(enc_key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA512()), algorithm=hashes.SHA512(),label=None))
     except:
@@ -206,7 +206,7 @@ def auin(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     digest.update(msg)
     hash_msg = digest.finalize()
     # print(hash_msg)
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     cipher_hash = snd_priv_rsa.sign(hash_msg, padding.PSS(mgf=padding.MGF1(hashes.SHA512()),salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashes.SHA512()))    
     
     base64_chash = base64.b64encode(cipher_hash)
@@ -253,7 +253,7 @@ def read_auin(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     digest.update(msg)
     hash_msg = digest.finalize()
     # print(hash_msg)
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:    
         snd_pub_rsa.verify(enc_hash, hash_msg, padding.PSS(mgf=padding.MGF1(hashes.SHA512()), salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashes.SHA512()))
     except:
@@ -325,7 +325,7 @@ def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     digest.update(msg)
     hash_msg = digest.finalize()
     
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:
         enc_hash = snd_priv_rsa.sign(hash_msg, padding.PSS(mgf=padding.MGF1(hashes.SHA512()),salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashes.SHA512()))
     except: 
@@ -337,7 +337,7 @@ def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     # step-4
     key_iv = sess_key + iv
     
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:
         enc_key_iv = rec_pub_rsa.encrypt(key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA512()), algorithm=hashes.SHA512(), label=None))
     except:
@@ -406,7 +406,7 @@ def read_coai(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     enc_key_iv = base64.b64decode(line1)
     enc_hash = base64.b64decode(line2)
     enc_msg = base64.b64decode(line3)
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:
         key_iv = rec_priv_rsa.decrypt(enc_key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA512()), algorithm=hashes.SHA512(),label=None))
     except:
@@ -430,7 +430,7 @@ def read_coai(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     digest = hashes.Hash(hashFn())
     digest.update(dec_msg)
     hash_dec_msg = digest.finalize()
-    # some SHA functions are not supported here, hence using the default SHA256 inside RSA, as given in documentation
+    # some SHA functions are not supported here, hence using the default SHA512 inside RSA, as given in documentation
     try:    
         snd_pub_rsa.verify(enc_hash, hash_dec_msg, padding.PSS(mgf=padding.MGF1(hashes.SHA512()), salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashes.SHA512()))
     except:
