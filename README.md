@@ -68,3 +68,4 @@ COAI
 2. It also checks all combination of hash and encryption functions given.
 3. The command sequence given has used RSA keys of length 2048. Entire exercise can be repeated for other key size too.
 4. typescript record for all these runs are also attached
+5. If there is any mismatch in encryption and decryption, (possibilities: sender/receiver names, digest/encryption functions, input file names, or RSA key size) the program will be unable to decrypt. will be throwing error.  
