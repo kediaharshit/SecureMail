@@ -29,6 +29,8 @@ def create_keys(usernamefile, keylen):
         f_pub = open(puk, 'w')
         f_pub.write(pub_pem.decode('utf8'))
         f_pub.close()
+        
+    print('Successfully generated key pair for ', names)
     return
         
 def conf(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
@@ -39,6 +41,7 @@ def conf(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     4) print in base64 format
     '''
     
+    # load required RSA keys
     rec_pub_file = open(receiver+'_pub_'+str(RSAkeylen)+'.txt','r')
     rec_pub_pem = bytes(rec_pub_file.read(), encoding='utf8')
     rec_pub_rsa = serialization.load_pem_public_key(rec_pub_pem)
@@ -98,8 +101,9 @@ def conf(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     outfp.write(base64_ctext1.decode('utf8'))
     outfp.write('\n')
     outfp.write(base64_ctext2.decode('utf8'))    
-    
     outfp.close()
+    
+    print('Successfully written to ', outputFile)
     return
 
 def read_conf(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
@@ -109,6 +113,8 @@ def read_conf(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     3) get encrypted msg from 2nd line
     4) decrypt
     '''
+    
+    # load required RSA keys
     rec_priv_file = open(receiver+'_priv_'+str(RSAkeylen)+'.txt', 'r', )
     rec_priv_pem = bytes(rec_priv_file.read(), encoding = 'utf8')
     rec_priv_rsa = serialization.load_pem_private_key(rec_priv_pem, None)
@@ -166,6 +172,8 @@ def read_conf(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     outFile = open(outputFile, 'w')
     outFile.write(dec_msg.decode('utf8'))
     outFile.close()    
+    
+    print('Successfully written to ', outputFile)
     return
     
 def auin(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
@@ -174,7 +182,7 @@ def auin(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     2) encrypt (1) using senders private key
     3) write (2) and msg in base64 format
     '''
-    
+    # load required RSA keys
     snd_priv_file = open(sender+'_priv_'+str(RSAkeylen)+'.txt', 'r', )
     snd_priv_pem = bytes(snd_priv_file.read(), encoding = 'utf8')
     snd_priv_rsa = serialization.load_pem_private_key(snd_priv_pem, None)
@@ -206,6 +214,8 @@ def auin(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     outfp.write(base64_chash.decode('utf8'))
     outfp.write('\n')
     outfp.write(base64_msg.decode('utf8'))
+    
+    print('Successfully written to ', outputFile)
     return
     
 def read_auin(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
@@ -214,6 +224,7 @@ def read_auin(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     2) calculate hash of msg text
     3) match them
     '''
+    # load required RSA keys
     snd_pub_file = open(sender+'_pub_'+str(RSAkeylen)+'.txt','r')
     snd_pub_pem = bytes(snd_pub_file.read(), encoding='utf8')
     snd_pub_rsa = serialization.load_pem_public_key(snd_pub_pem)
@@ -251,6 +262,7 @@ def read_auin(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     outFile.write(msg.decode('utf8'))
     outFile.close()     
 
+    print('Successfully written to ', outputFile)
     return
 
 def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
@@ -262,7 +274,7 @@ def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     4) session key, iv is encrypted using receiver's public key
     5) print to file in 2 lines
     '''
-    
+    # load required RSA keys
     rec_pub_file = open(receiver+'_pub_'+str(RSAkeylen)+'.txt','r')
     rec_pub_pem = bytes(rec_pub_file.read(), encoding='utf8')
     rec_pub_rsa = serialization.load_pem_public_key(rec_pub_pem)
@@ -338,6 +350,8 @@ def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     outfp.write('\n')
     outfp.write(base64_enc_msg.decode('utf8'))    
     outfp.close()
+    
+    print('Successfully written to ', outputFile)
     return
   
 def read_coai(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
@@ -348,7 +362,7 @@ def read_coai(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     3) decrypt hash with senders public key
     4) match with hash of decrypted msg
     '''
-    
+    # load required RSA keys
     rec_priv_file = open(receiver+'_priv_'+str(RSAkeylen)+'.txt', 'r', )
     rec_priv_pem = bytes(rec_priv_file.read(), encoding = 'utf8')
     rec_priv_rsa = serialization.load_pem_private_key(rec_priv_pem, None)
@@ -427,6 +441,7 @@ def read_coai(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     outFile.write(dec_msg.decode('utf8'))
     outFile.close()    
     
+    print('Successfully written to ', outputFile)
     return
   
 if __name__ == "__main__":
@@ -448,7 +463,8 @@ if __name__ == "__main__":
         
     elif(mode == 'CreateMail'):
         if not argc==10:
-            print('incorrect parameters')
+            print('incorrect number of parameters')
+            print('python3 lab2.py CreateMail SecType Sender Receiver EmailInputFile EmailOutputFile DigestAlg EncryAlg RSAKeySize')
             exit(0)
         
         op = sys.argv[2]
@@ -467,12 +483,13 @@ if __name__ == "__main__":
         elif op=='COAI':
             coai(sender, recver, inputFile, outputFile, hashAlgo, encAlgo, RSAsize)
         else:
-            print('invalid operation type')
+            print('invalid SecType, enter one of CONF, AUIN, COAI')
             exit(0)
             
     elif(mode == 'ReadMail'):
         if not argc==10:
-            print('incorrect parameters')
+            print('incorrect number of parameters')
+            print('python3 lab2.py ReadMail SecType Sender Receiver EmailInputFile EmailOutputFile DigestAlg EncryAlg RSAKeySize')
             exit(0)
         
         op = sys.argv[2]
@@ -491,7 +508,7 @@ if __name__ == "__main__":
         elif op=='COAI':
             read_coai(sender, recver, inputFile, outputFile, hashAlgo, encAlgo, RSAsize)
         else:
-            print('invalid operation type')
+            print('invalid SecType, enter one of CONF, AUIN, COAI')
             exit(0)
     else:
-        print('invalid commands')
+        print('Use one of CreateKeys, CreateMail, ReadMail')
