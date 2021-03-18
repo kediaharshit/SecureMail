@@ -7,3 +7,8 @@
 4) python3 lab2.py CreateMail AUIN bob alice msg.txt enc_auin.txt sha512 des-ede3-cbc 2048
 
 5) python3 lab2.py ReadMail AUIN bob alice enc_auin.txt dec_auin.txt sha512 des-ede3-cbc 2048
+
+6) python3 lab2.py CreateMail COAI bob alice msg.txt enc_coai.txt sha512 des-ede3-cbc 2048
+
+7) python3 lab2.py ReadMail COAI bob alice enc_coai.txt dec_coai.txt sha512 des-ede3-cbc 2048
+
