@@ -1,4 +1,3 @@
-import cryptography
 import base64
 import sys
 import os
@@ -89,7 +88,7 @@ def conf(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     try:
         c_text1 = rec_pub_rsa.encrypt(key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashFn()), algorithm=hashFn(), label=None))
     except:
-        print("RSA encryption with receiver public key failed")
+        print("RSA encryption of Session Key and IV with receiver public key failed")
         return
     #step 4
     outfp = open(outputFile, 'w')
@@ -245,7 +244,7 @@ def read_auin(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAke
     try:    
         snd_pub_rsa.verify(enc_hash, hash_msg, padding.PSS(mgf=padding.MGF1(hashFn()), salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashFn()))
     except:
-        print("Signature doesnt match")
+        print("RSA signature hash of message doesnt match")
         return
     
     outFile = open(outputFile, 'w')
@@ -269,7 +268,28 @@ def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     rec_pub_rsa = serialization.load_pem_public_key(rec_pub_pem)
     rec_pub_file.close()
     
+    snd_priv_file = open(sender+'_priv_'+str(RSAkeylen)+'.txt', 'r', )
+    snd_priv_pem = bytes(snd_priv_file.read(), encoding = 'utf8')
+    snd_priv_rsa = serialization.load_pem_private_key(snd_priv_pem, None)
+    snd_priv_file.close()
     
+    if encAlgo == 'des-ede3-cbc':
+        sess_keylen = 192//8
+        block_size = 64//8
+        sess_key = os.urandom(sess_keylen)        
+        iv = os.urandom(block_size)
+        cipher = Cipher(algorithms.TripleDES(sess_key), modes.CBC(iv))
+        encryptor = cipher.encryptor()    
+    elif encAlgo == 'aes-256-cbc':
+        sess_keylen = 256//8
+        block_size = 128//8
+        sess_key = os.urandom(sess_keylen)
+        iv = os.urandom(block_size)
+        cipher = Cipher(algorithms.AES(sess_key), modes.CBC(iv))
+        encryptor = cipher.encryptor()
+    else:
+        print('invaid encryption algo, use one among des-ede3-cbc, aes-256-cbc')
+        exit(0)
     
     if hashAlgo == 'sha512':
         hashFn = hashes.SHA512
@@ -278,8 +298,77 @@ def coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
     else:
         print('invaid digest/hash algorithm name')
         exit(0)
+    
+    f_msg = open(msgFile,'r')
+    msg = bytes(f_msg.read(), encoding='utf8')
+    f_msg.close()
+    
+    if len(msg)%block_size > 0:
+        pad_length = block_size - len(msg)%block_size
+        msg = msg + (b'\x00' * pad_length)
+
+    digest = hashes.Hash(hashFn())
+    digest.update(msg)
+    hash_msg = digest.finalize()
+    
+    try:
+        enc_hash = snd_priv_rsa.sign(hash_msg, padding.PSS(mgf=padding.MGF1(hashFn()),salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashFn()))
+    except: 
+        print("RSA encryption of hash using senders private key failed")
+        return
+    # end of step-2
+    # step-3
+    enc_msg = encryptor.update(msg) + encryptor.finalize()
+    # step-4
+    key_iv = sess_key + iv
+    try:
+        enc_key_iv = rec_pub_rsa.encrypt(key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashFn()), algorithm=hashFn(), label=None))
+    except:
+        print("RSA encryption of Session key and IV with receiver public key failed")
+        return
+    
+    base64_enc_key_iv = base64.b64encode(enc_key_iv)
+    base64_enc_hash = base64.b64encode(enc_hash)
+    base64_enc_msg = base64.b64encode(enc_msg)
+    
+    outfp = open(outputFile, 'w')
+    outfp.write(base64_enc_key_iv.decode('utf8'))
+    outfp.write('\n')
+    outfp.write(base64_enc_hash.decode('utf8'))
+    outfp.write('\n')
+    outfp.write(base64_enc_msg.decode('utf8'))    
+    outfp.close()
+    return
   
-def read_coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
+def read_coai(sender, receiver, cipherFile, outputFile, hashAlgo, encAlgo, RSAkeylen):
+    
+    '''
+    1) findout key, iv using receivers private key
+    2) decrypt message with (1)
+    3) decrypt hash with senders public key
+    4) match with hash of decrypted msg
+    '''
+    
+    rec_priv_file = open(receiver+'_priv_'+str(RSAkeylen)+'.txt', 'r', )
+    rec_priv_pem = bytes(rec_priv_file.read(), encoding = 'utf8')
+    rec_priv_rsa = serialization.load_pem_private_key(rec_priv_pem, None)
+    rec_priv_file.close()
+    
+    snd_pub_file = open(sender+'_pub_'+str(RSAkeylen)+'.txt','r')
+    snd_pub_pem = bytes(snd_pub_file.read(), encoding='utf8')
+    snd_pub_rsa = serialization.load_pem_public_key(snd_pub_pem)
+    snd_pub_file.close()    
+    
+    if encAlgo == 'des-ede3-cbc':
+        sess_keylen = 192//8
+        block_size = 64//8
+    elif encAlgo == 'aes-256-cbc':
+        sess_keylen = 256//8
+        block_size = 128//8
+    else:
+        print('invaid encryption algo, use one among des-ede3-cbc, aes-256-cbc')
+        exit(0)
+    
     if hashAlgo == 'sha512':
         hashFn = hashes.SHA512
     elif hashAlgo == 'sha3-512':
@@ -287,6 +376,58 @@ def read_coai(sender, receiver, msgFile, outputFile, hashAlgo, encAlgo, RSAkeyle
     else:
         print('invaid digest/hash algorithm name')
         exit(0)
+        
+    f_cipher = open(cipherFile, 'r')
+    total = f_cipher.read().split()
+    line1 = total[0]
+    line2 = total[1]
+    line3 = total[2]
+    f_cipher.close()
+    
+    enc_key_iv = base64.b64decode(line1)
+    enc_hash = base64.b64decode(line2)
+    enc_msg = base64.b64decode(line3)
+    
+    try:
+        key_iv = rec_priv_rsa.decrypt(enc_key_iv, padding.OAEP(mgf=padding.MGF1(algorithm=hashFn()), algorithm=hashFn(),label=None))
+    except:
+        print("RSA decryption of Secret key and IV with receiver private key failed")
+        return
+        
+    sess_key = key_iv[0:sess_keylen]
+    iv = key_iv[sess_keylen: sess_keylen+block_size]
+    # end of step-1
+    
+    if encAlgo == 'des-ede3-cbc':
+        cipher = Cipher(algorithms.TripleDES(sess_key), modes.CBC(iv))
+        decryptor = cipher.decryptor()
+    elif encAlgo == 'aes-256-cbc':
+        cipher = Cipher(algorithms.AES(sess_key), modes.CBC(iv))
+        decryptor = cipher.decryptor()
+    
+    dec_msg = decryptor.update(enc_msg) + decryptor.finalize()
+    # end of step-2
+    
+    digest = hashes.Hash(hashFn())
+    digest.update(dec_msg)
+    hash_dec_msg = digest.finalize()
+    
+    try:    
+        snd_pub_rsa.verify(enc_hash, hash_dec_msg, padding.PSS(mgf=padding.MGF1(hashFn()), salt_length=padding.PSS.MAX_LENGTH), utils.Prehashed(hashFn()))
+    except:
+        print("RSA Signature of hash doesnt match")
+        return
+    
+    for i in range(0, len(dec_msg)):
+        if dec_msg[i] == 0:
+            break    
+    dec_msg = dec_msg[0:i]
+    
+    outFile = open(outputFile, 'w')
+    outFile.write(dec_msg.decode('utf8'))
+    outFile.close()    
+    
+    return
   
 if __name__ == "__main__":
     argc = len(sys.argv)
@@ -348,10 +489,9 @@ if __name__ == "__main__":
         elif op=='AUIN':
             read_auin(sender, recver, inputFile, outputFile, hashAlgo, encAlgo, RSAsize)
         elif op=='COAI':
-            coai(sender, recver, inputFile, outputFile, hashAlgo, encAlgo, RSAsize)
+            read_coai(sender, recver, inputFile, outputFile, hashAlgo, encAlgo, RSAsize)
         else:
             print('invalid operation type')
             exit(0)
     else:
         print('invalid commands')
-    
