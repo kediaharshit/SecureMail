@@ -14,7 +14,7 @@ Details on how to run, sample input commands are given below, as well as on prob
 2. usernames.txt : file containing 11 distinct usernames for which can be used to test the program, new names can be added.
 3. README : has instrutions and sample cases to run.
 4. COMMENTS.txt : feedback and experience of the project.
-
+5. typescripts: folder containing 3 session records, each corresponding to CONF, AUIN, COAI, of commands shown below.
 ###### Instructions:
 1. Used library cryptography, https://pypi.org/project/cryptography
 2. Use the format from the problem statement, can change _sender, receiver_ names for testing. Can also change _inputfile, outputfile_ as reuqired. Finally, we can also select the DigestAlgo among one of "sha512, sha3-512", and EncryptionAlgo among one of "des_ede3-cbc, aes-256-cbc".
@@ -68,4 +68,5 @@ COAI
 2. It also checks all combination of hash and encryption functions given.
 3. The command sequence given has used RSA keys of length 2048. Entire exercise can be repeated for other key size too.
 4. typescript record for all these runs are also attached
-5. If there is any mismatch in encryption and decryption, (possibilities: sender/receiver names, digest/encryption functions, input file names, or RSA key size) the program will be unable to decrypt. will be throwing error.  
+5. If there is any mismatch in encryption and decryption, (possibilities: sender/receiver names, digest/encryption functions, input file names, or RSA key size) the program will be unable to decrypt. will be throwing error.
+6. There are some combinations which wont work when using lower key_length of RSA, like 1024 or 512, due to restrictions of RSA, and length of bytes to be encoded.
