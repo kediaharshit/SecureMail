@@ -1,0 +1,55 @@
+Script started on 2021-03-18 12:11:05+0530
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py CreateKeys usernames.txt 2048
+Successfully generated key pair for  ['alice', 'bob', 'charlie', 'darth', 'gary', 'harry', 'jim', 'kathy', 'nancy', 'pam', 'rob', 'tim']
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ ls -l *_priv* *_pubK_*
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:11 alice_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 alice_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 bob_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 bob_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 charlie_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 charlie_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:11 darth_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 darth_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 gary_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 gary_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 harry_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 harry_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:11 jim_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 jim_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 kathy_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 kathy_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 nancy_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 nancy_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:11 pam_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 pam_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 rob_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 rob_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:11 tim_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:11 tim_pub_2048.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat msg.txt
+This is my test message, hope it gets securely delivered
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py CreateMail COAI harry darth msg.txt enc_coai.txt sha3-512 aes-256-cbc 2048
+Successfully written to  enc_coai.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py ReadMail COAI harry darth enc_coai.txt dec_coai.txt sha3-512 aes-256-cbc 2048
+Successfully written to  dec_coai.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat dec_coai.txt
+This is my test message, hope it gets securely delivered
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ diff msg.txt coai.txt
+diff: coai.txt: No such file or directory
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ diff msg.txt dec_coai.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py CreateMail COAI charlie gary msg.txt enc_coai.txt sha512 des-ede3-cbc 2048
+Successfully written to  enc_coai.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py ReadMail COAI charlie gary enc_coai.txt dec_coai.txt sha512 des-ede3-cbc 2048
+Successfully written to  dec_coai.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat dec_coai.txt
+This is my test message, hope it gets securely delivered
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ diff msg.txt dec_coai.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat enc_coai.txt
+zpzrAjQjubM7DhIn10T6BPATzkxQAtvximO2DPzAl6y0PmEj8CNX1RBJ207HfU+SuBHeMRqkRL8RvlfuHPqYBhndNXlFVMKM6nL9K2IBDoKem9e1SsGpzkIWcRI7UDTcR0yBEZrhDPaiYZUHfNTA4Eak1wNDsI07fOgnL3JV0clOknd01Bvpc+ZXfz+hm8vDnueOFmtWnsw8KmRWRMVtGNcMNZ8jWry+gH5BgB7az8at9c7vyzvKipF2dOpPcBU6VqgDYwkljbdNpidPN6UgwKZvS0NNUuGRW7FBVAp0FjfEsm3aJDbn+1Mk5drbQIeSEK2+V+afFJpJ8Ez/bJOPCQ==
+pkxqMsmNgnxoqtzIkwq8pZGNGr2teE9oDTK3VsjTlZfDgaItJhQmkvfJIdYfLaLXjQ7pDf3u9MJrfBQvxfWsfTUKUkgdjqziQtsTc3qt1Rz6svLAXXtqg/Ixhs2KNL4L/2peRDF5f1BJs84s8bXGyEJde5T3ZYwlbJWq7nmjszkKzAwbFMskYnWjm64lXwkgtc6ZL3cGfWZ+c4/rszMsc1oSyMQEqIewHeQgSO4UQUISKePZJtoOyOzhfn4/tRcOg3F4j7+ddzkfQDjVYARKBe7r9kPfOZrlKRpoETOLNFpINhLK3/j1Yxu/jNaKQPOUQ+bZNblHVdBep1blGoKHUg==
+BaZWthcJ/BZbcAyJmsIDcLNaZhKM8KY5zOtzp/Z0uQUOH32Lm2RfmSYk8iuO3K/USA/OwIGlKnDQhev8rx8yyg==0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ exit
+
+Script done on 2021-03-18 12:12:55+0530

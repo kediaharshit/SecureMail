@@ -1,0 +1,49 @@
+Script started on 2021-03-18 12:07:33+0530
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py CreateKeys usernames.txt 2048
+Successfully generated key pair for  ['alice', 'bob', 'charlie', 'darth', 'gary', 'harry', 'jim', 'kathy', 'nancy', 'pam', 'rob', 'tim']
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ ls -l *_priv_* *_pub_*
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 alice_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 alice_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:07 bob_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 bob_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:07 charlie_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 charlie_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 darth_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 darth_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:07 gary_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 gary_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:07 harry_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 harry_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 jim_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 jim_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 kathy_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 kathy_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1675 Mar 18 12:07 nancy_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 nancy_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 pam_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 pam_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 rob_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 rob_pub_2048.txt
+-rw-r--r-- 1 hk3 hk3 1679 Mar 18 12:07 tim_priv_2048.txt
+-rw-r--r-- 1 hk3 hk3  451 Mar 18 12:07 tim_pub_2048.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat msg.txt
+This is my test message, hope it gets securely delivered
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py CreateMail CONF bob alice msg.txt enc_conf.txt sha512 aes-256-cbc 2048
+Successfully written to  enc_conf.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py ReadMail CONF bob alice enc_conf.txt dec_conf.txt sha512 aes-256-cbc 2048
+Successfully written to  dec_conf.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat dec_conf.txt
+This is my test message, hope it gets securely delivered
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ diff msg.txt dec_conf.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py CreateMail CONF jim pam msg.txt enc_conf.txt sha3-512 des-ede3-cbc 2048
+Successfully written to  enc_conf.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ python3 lab2.py ReadMail CONF jim pam enc_conf.txt dec_conf.txt sha3-512 des-ede3-cbc 2048
+Successfully written to  dec_conf.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat dec_conf.txt
+This is my test message, hope it gets securely delivered
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ diff msg.txt dec_conf.txt
+0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ cat enc_conf.txt
+u35cu9GEUbSUjgbLHZ05a7DlETGplf/xsMMIYtut/g9qfIURMdA7ODsXleiIEwia6iFCIjER91FOEkyyq0RkuBAnTocWDj9Ty8pivIWeTxDDrM1MWFzbvrLqJABPM5RVfQo0KfoYrsA7s0OcBmuIocpP1lTmIP6+jEijw83/KLNGUJ4l7sneiWZbwjx1Aa+/tGJ3lOhpWDnISULnpnU8UEL5QAvH4/3u9jgv97sr5zBXLy6vE+4Y8KTcQC4UACSgbzOuVBOlAdNxuBkfpsgMlBNnR9W/XmiXZiqPEXdl1Gbz/haH+w6iUfXPo3GXW0z//uMIEXWuCBCaMDM+Gf1gkg==
+mceFmoXd6aCm8rnPBiXwk3UEKbPCqjE08EWBv1UbNho2itYjrSSZxPRY6e291X+GSUtszVj3WkoYk+hpvMpsBw==0;hk3@hk3: ~/cs6500/A201;32mhk3@hk300m:01;34m~/cs6500/A200m$ exit
+
+Script done on 2021-03-18 12:09:22+0530
